@@ -17,6 +17,8 @@
     "babel-preset-expo": "^5.0.0"
   },
   "rnpm": {
-    "assets": ["./fonts"]
+    "assets": [
+      "./fonts"
+    ]
   }
 }
