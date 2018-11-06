@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, Button } from 'react-native';
+import { navigate } from 'react-navigation';
+
 import styles from './Styles';
 
 export default class Header extends Component {
@@ -7,18 +9,17 @@ export default class Header extends Component {
         super();
 
         this.state = {
-            title: 'laskukone',
+            title: 'Home',
         };
     }
 
     render() {
         return (
             <View style={styles.header}>
-                {
-                    this.state.fontLoaded ? (
-                        <Text style={styles.headerTitle}>{this.state.title.toUpperCase()}</Text>
-                    ) : null
-                }
+                <Text style={styles.headerTitle}>{this.state.title.toUpperCase()}</Text>
+                <View>
+                    <Button title="Counter" onPress={() => navigate('Counter')} />
+                </View>
             </View>
         );
     }
