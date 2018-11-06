@@ -1,6 +1,6 @@
 import React from 'react';
 import { Font } from 'expo';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Button } from 'react-native';
 import { defaults } from './Styles/Defaults';
 
 // Custom component imports
@@ -26,13 +26,20 @@ export default class Home extends React.Component {
 		this.setState({ fontLoaded: true });
 	}
 
+	static navigationOptions = {
+		headerTitle: <Header title='Home' />,
+	};
+
 	render() {
 		return (
 			<View style={styles.container}>
 				{
 					this.state.fontLoaded ? (
 						<View>
-							<Header />
+							{/* <Header /> */}
+							<View>
+								<Button title="Counter" onPress={() => this.props.navigation.navigate('Counter')} />
+							</View>
 						</View>
 					) : null
 				}

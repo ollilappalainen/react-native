@@ -1,19 +1,9 @@
 import { StyleSheet } from 'react-native';
 import { defaults } from '../Styles/Defaults';
 
-export default styles = StyleSheet.create({
+export default styles = {
     header: {
-		display: 'flex',
-		alignSelf: 'stretch',
-		alignItems: 'center',
-		justifyContent: 'center',
+		backgroundColor: defaults.colors.black,
+		tintColor: defaults.colors.purple,
 	},
-	headerTitle: {
-		fontFamily: defaults.fonts.light,
-		fontSize: defaults.fontSizes.title,
-		color: defaults.colors.purple,
-		marginTop: 40,
-		marginBottom: 20,
-		letterSpacing: 1,
-	},
-});
+};

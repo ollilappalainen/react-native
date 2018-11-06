@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, TextInput, TouchableOpacity } from 'react-native';
 import styles from './Styles';
+import Header from '../Header/Header';
 
 export default class Counter extends Component {
 	constructor() {
@@ -14,6 +15,10 @@ export default class Counter extends Component {
 
 		this.handleButtonPress = this.handleButtonPress.bind(this);
     }
+
+    static navigationOptions = {
+		headerTitle: <Header title='Counter' />,
+	};
 
     handleButtonPress = (mathType) => {
 		this.count(mathType);
@@ -37,7 +42,7 @@ export default class Counter extends Component {
 
     render() {
         return (
-            <View>
+            <View style={styles.counterContainer}>
                 <View style={styles.counterResult}>
                     <Text style={styles.counterResultText}>{this.state.mathResult}</Text>
                 </View>

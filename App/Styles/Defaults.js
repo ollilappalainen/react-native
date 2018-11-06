@@ -1,10 +1,10 @@
 export const defaults = {
 	colors: {
-		black: '#0E0B16',
-		purple: '#4717F6',
-		pink: '#A239CA',
-		grey: '#E7DFDD',
-		white: '#FFF'
+		black: '#0e0b16',
+		purple: '#4717f6',
+		pink: '#a239ca',
+		grey: '#e7dfdd',
+		white: '#fff'
 	},
 	fonts: {
 		default: 'roboto-regular',

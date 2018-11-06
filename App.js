@@ -1,9 +1,9 @@
 import React from 'react';
-import { Font } from 'expo';
 import { createStackNavigator } from 'react-navigation';
 import Counter from './App/Counter/Counter';
 
 //Custom component imports
+import styles from './App/Header/Styles';
 import Home from './App/Home';
 
 const RootStack = createStackNavigator(
@@ -13,6 +13,12 @@ const RootStack = createStackNavigator(
 	},
 	{
 		initialRoute: 'Home',
+		navigationOptions: {
+			headerStyle: {
+				backgroundColor: styles.header.backgroundColor,
+			},
+			headerTintColor: styles.header.tintColor,
+		}
 	}
 );
 

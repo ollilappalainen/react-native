@@ -2,6 +2,13 @@ import { StyleSheet } from 'react-native';
 import { defaults } from '../Styles/Defaults';
 
 export default styles = StyleSheet.create({
+	counterContainer: {
+		flex: 1,
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'flex-start',
+		backgroundColor: defaults.colors.black,
+	},
     counter: {
 		display: 'flex',
 		flexDirection: 'column',
