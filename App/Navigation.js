@@ -1,6 +1,22 @@
-import { Navigation } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation';
 
-export function registerScreens() {
-    Navigation.registerComponent('app.Home', () => require('./Home').default);
-    Navigation.registerComponent('app.Counter', () => require('./Counter/Counter').default);
-}
+//Custom imports
+import { defaults } from './Styles/Defaults';
+import Home from './Home';
+import Counter from './Counter/Counter';
+
+export const RootStack = createStackNavigator(
+	{
+		Home: Home,
+		Counter: Counter,
+	},
+	{
+		initialRoute: 'Home',
+		navigationOptions: {
+			headerStyle: {
+				backgroundColor: defaults.colors.black,
+			},
+			headerTintColor: defaults.colors.purple,
+		}
+	}
+);
