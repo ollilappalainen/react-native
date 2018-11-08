@@ -4,6 +4,7 @@ import { View, Button } from 'react-native';
 // Custom component imports
 import styles from './Styles';
 import Header from './Header/Header';
+import ButtonLarge from './Common/ButtonLarge/ButtonLarge';
 
 export default class Home extends React.Component {
 	static navigationOptions = {
@@ -13,11 +14,7 @@ export default class Home extends React.Component {
 	render() {
 		return (
 			<View style={styles.container}>
-				<View>
-					<View>
-						<Button title="Counter" onPress={() => this.props.navigation.navigate('Counter')} />
-					</View>
-				</View>
+				<ButtonLarge pressMethod={() => {this.props.navigation.navigate('Counter')}} buttonTitle="Counter" />
 			</View>
 		);
 	}

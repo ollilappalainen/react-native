@@ -55,7 +55,7 @@ export default class Counter extends Component {
                             <TouchableOpacity style={styles.counterButton} onPress={() => this.handleButtonPress(1)}>
                                 <Text style={styles.buttonText}> + </Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.counterButton} onPress={() => this.handleButtonPress(1)}>
+                            <TouchableOpacity style={styles.counterButton} onPress={() => this.handleButtonPress(0)}>
                                 <Text style={styles.buttonText}> - </Text>
                             </TouchableOpacity>
                         </View>
