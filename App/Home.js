@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Button } from 'react-native';
+import { View } from 'react-native';
 
 // Custom component imports
 import styles from './Styles';
@@ -15,6 +15,7 @@ export default class Home extends React.Component {
 		return (
 			<View style={styles.container}>
 				<ButtonLarge pressMethod={() => {this.props.navigation.navigate('Counter')}} buttonTitle="Counter" />
+				<ButtonLarge pressMethod={() => {this.props.navigation.navigate('GuessTheNumber')}} buttonTitle="Guess The Number" />
 			</View>
 		);
 	}
