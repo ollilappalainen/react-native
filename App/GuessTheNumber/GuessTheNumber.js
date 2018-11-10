@@ -22,6 +22,7 @@ export default class GuessTheNumber extends Component {
         this.handleGuessInputChange = this.handleGuessInputChange.bind(this);
         this.emptyGuessInput = this.emptyGuessInput.bind(this);
         this.getLabel = this.getLabel.bind(this);
+        this.startNewGame = this.startNewGame.bind(this);
     }
 
     static navigationOptions = {
@@ -45,17 +46,25 @@ export default class GuessTheNumber extends Component {
         });
     }
 
+    startNewGame() {
+        this.setState({
+            guesses: [],
+            numberToGuess: Math.floor(Math.random() * 100) + 1
+        });
+    }
+
     checkGuess() {
         const { guess } = this.state;
         const mystery = this.state.numberToGuess;
-        const efforts = this.state.guesses.length + 1;
+        const efforts = this.state.guesses.length;
 
         if (guess > mystery) {
             alert('Too much! Make a new guess..');
         } else if (guess < mystery) {
             alert('Too little! Make a new guess..');
         } else {
-            alert(`Good you got it right! It took you ${efforts} times to guess. Right answer was ${mystery} and yours was also ${guess}. :)`)
+            alert(`Good you got it right! It took you ${efforts} times to guess. Right answer was ${mystery} and yours was also ${guess}. :)`);
+            this.startNewGame();
         }
     }
 
