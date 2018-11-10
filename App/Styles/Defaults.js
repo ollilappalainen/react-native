@@ -9,7 +9,7 @@ const commons = {
 		white: '#fff'
 	},
 	fonts: {
-		default: 'roboto-regular',
+		default: 'roboto',
 		light: 'roboto-light',
 		bold: 'roboto-bold',
 	},
@@ -42,13 +42,31 @@ export const defaults = {
 	},
 	inputs: StyleSheet.create({
 		textInput: {
+			display: 'flex',
+			alignSelf: 'stretch',
 			fontSize: commons.fontSizes.textLarge,
 			color: commons.colors.grey,
 			borderBottomWidth: 1,
 			borderBottomColor: commons.colors.pink,
 			padding: 10,
 			margin: 10,
-			width: 300,
-		}		
+			textAlign: 'center'
+		}
+	}),
+	containers: StyleSheet.create({
+		fullCenter: {
+			flex: 1,
+			flexDirection: 'column',
+			alignItems: 'center',
+			justifyContent: 'center',
+			backgroundColor: commons.colors.black,
+		},
+		fullTop: {
+			flex: 1,
+			flexDirection: 'column',
+			alignItems: 'center',
+			justifyContent: 'flex-start',
+			backgroundColor: commons.colors.black,
+		}
 	})
 }

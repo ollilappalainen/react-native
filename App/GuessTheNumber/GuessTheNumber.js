@@ -1,36 +1,108 @@
 import React, { Component } from 'react';
-import { Text, View, TextInput } from 'react-native';
+import { View, Text } from 'react-native';
 import styles from './Styles';
 import Header from '../Header/Header';
+import NewGuess from './NewGuess/NewGuess';
+import Answers from './Answers/Answers';
+import ButtonSmall from '../Common/ButtonSmall/ButtonSmall';
 
 export default class GuessTheNumber extends Component {
 	constructor() {
         super();
 
         this.state = {
-            firstGuess: '0',
-            secondGuess: '0',
-            thirdGuess: '0',
+            numberToGuess: Math.floor(Math.random() * 100) + 1,
+            guesses: [],
+            guess: ''
         };
 
-		this.handleButtonPress = this.handleButtonPress.bind(this);
-    }   
+        this.updateGuesses = this.updateGuesses.bind(this);
+        this.handleNewGuess = this.handleNewGuess.bind(this);
+        this.checkGuess = this.checkGuess.bind(this);
+        this.handleGuessInputChange = this.handleGuessInputChange.bind(this);
+        this.emptyGuessInput = this.emptyGuessInput.bind(this);
+        this.getLabel = this.getLabel.bind(this);
+    }
 
     static navigationOptions = {
 		headerTitle: <Header title='Guess The Number' />,
 	};
 
-    handleButtonPress() {
+    updateGuesses() {
+        const guess = this.state.guess;
+        const guesses = this.state.guesses;
+        const rowKey = guesses.length + 1;
+        const newGuess = {
+            key: rowKey.toString(),
+            data: guess,
+         };
 
+        guesses.push(newGuess);
+
+        this.setState({
+            guesses: guesses,
+            guess: guess
+        });
+    }
+
+    checkGuess() {
+        const { guess } = this.state;
+        const mystery = this.state.numberToGuess;
+        const efforts = this.state.guesses.length + 1;
+
+        if (guess > mystery) {
+            alert('Too much! Make a new guess..');
+        } else if (guess < mystery) {
+            alert('Too little! Make a new guess..');
+        } else {
+            alert(`Good you got it right! It took you ${efforts} times to guess. Right answer was ${mystery} and yours was also ${guess}. :)`)
+        }
+    }
+
+    emptyGuessInput() {
+        this.setState({
+            guess: ''
+        });
+    }
+
+    handleNewGuess() {
+        let guess = this.state.guess;
+        guess = parseInt(guess);
+
+        if (guess && guess >= 0 && guess <= 100) {
+            this.updateGuesses();
+            this.checkGuess();
+            this.emptyGuessInput();
+        } else if (!guess || guess <= 0 || guess >= 100) {
+            alert('Please enter a number from 0 to 100');
+        }
+    }
+
+    handleGuessInputChange(guess) {
+        this.setState({
+            guess: guess
+        });
+    }
+
+    getLabel() {
+        return this.state.guesses.length
+            ? "Guess again.. :)"
+            : "Guess a number between 0 and 100";
     }
 
     render() {
         return (
-            <View>
-                <View>
-                    <Text>Guess a number between 1 and 100..</Text>
-                    <TextInput style={styles.textInput} keyboardType='numeric' maxLength={3} onChangeText={(firstGuess) => this.setState({firstGuess})} value={this.state.firstGuess} />
-                </View>
+            <View style={styles.container}>
+                <Answers guesses={this.state.guesses} />
+                <NewGuess
+                    labelText={this.getLabel()}
+                    handleGuess={this.handleGuessInputChange}
+                    inputValue={this.state.guess}
+                />
+                <ButtonSmall
+                    buttonTitle="Guess"
+                    pressMethod={this.handleNewGuess}
+                />
             </View>
         );
     }

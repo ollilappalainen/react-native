@@ -4,7 +4,7 @@ import { Text, TouchableOpacity } from 'react-native';
 // Custom component imports
 import styles from './Styles';
 
-export default class ButtonLarge extends React.Component {
+export default class ButtonSmall extends React.Component {
 	constructor() {
 		super();
 
@@ -17,7 +17,7 @@ export default class ButtonLarge extends React.Component {
 
 	render() {
 		return (
-			<TouchableOpacity style={styles.buttonLarge} onPress={this.handleButtonPress}>
+			<TouchableOpacity style={styles.buttonSmall} onPress={this.handleButtonPress}>
 				<Text style={styles.buttonText}>{this.props.buttonTitle.toUpperCase()}</Text>
 			</TouchableOpacity>
 		);

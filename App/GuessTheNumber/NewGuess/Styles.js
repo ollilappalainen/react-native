@@ -1,13 +1,17 @@
 import { StyleSheet } from 'react-native';
-import { defaults } from '../Styles/Defaults';
+import { defaults } from '../../Styles/Defaults';
 
 export default styles = StyleSheet.create({
-    container: defaults.containers.fullTop,
+    container: {
+        display: 'flex',
+        alignSelf: 'stretch',
+        justifyContent: 'center'
+    },
     textInput: defaults.inputs.textInput,
     text: {
         display: 'flex',
         alignSelf: 'stretch',
-        textAlign: 'left',
+        textAlign: 'center',
         color: defaults.colors.pink,
         marginTop: 40,
         marginBottom: 40,
