@@ -14,6 +14,12 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "ios": {
+      "bundleIdentifier": "com.ollilappalainen.selfstalker"
+    },
+    "android": {
+      "package": "com.ollilappalainen.selfstalker"
+    },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
