@@ -16,6 +16,7 @@ export default class Home extends React.Component {
 			<View style={styles.container}>
 				<ButtonLarge pressMethod={() => {this.props.navigation.navigate('Counter')}} buttonTitle="Counter" />
 				<ButtonLarge pressMethod={() => {this.props.navigation.navigate('GuessTheNumber')}} buttonTitle="Guess The Number" />
+				<ButtonLarge pressMethod={() => {this.props.navigation.navigate('CounterWithFlatlist')}} buttonTitle="Counter With Flatlist" />
 			</View>
 		);
 	}
