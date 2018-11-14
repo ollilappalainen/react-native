@@ -18,7 +18,14 @@
       "bundleIdentifier": "com.ollilappalainen.selfstalker"
     },
     "android": {
-      "package": "com.ollilappalainen.selfstalker"
+      "package": "com.ollilappalainen.selfstalker",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ],
+      "config": {
+        "googleMaps": { "apiKey": "AIzaSyB0jvwgJ5td-k_WFw7Xzx-zE55e-RBufIw" }
+      }
     },
     "updates": {
       "fallbackToCacheTimeout": 0

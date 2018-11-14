@@ -5,7 +5,7 @@ import { View } from 'react-native';
 import styles from './Styles';
 import Header from '../Header/Header';
 import ButtonLarge from '../Common/ButtonLarge/ButtonLarge';
-import MapView from './components/MapView/MapView';
+import Map from './components/Map/Map';
 
 export default class SelfStalker extends React.Component {
     constructor() {
@@ -25,8 +25,8 @@ export default class SelfStalker extends React.Component {
 	render() {
 		return (
 			<View style={styles.container}>
-                <MapView />
-                <ButtonLarge buttonTitle="Start Stalking" pressMethod={this.handleButtonPress} />
+                <Map />
+                {/* <ButtonLarge buttonTitle="Start Stalking" pressMethod={this.handleButtonPress} /> */}
 			</View>
 		);
 	}
