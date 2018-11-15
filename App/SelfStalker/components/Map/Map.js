@@ -29,12 +29,20 @@ export default class Map extends React.Component {
 		headerTitle: <Header title='SelfStalker' />,
 	};
 
+	focusToLocation = () => {
+		this.mapRef.fitToSuppliedMarkers(
+			this.marker,
+			true,
+		);
+	}
+
 	watchLocation = () => {
 		this.watchId = navigator.geolocation.watchPosition(position => {
 			const lat = position.coords.latitude;
 			const long = position.coords.longitude;
 
 			this.setMapCoords(lat, long);
+			this.focusToLocation();
 		}, error => console.log(error),
 		{
 			enableHighAccuracy: true,
@@ -123,11 +131,16 @@ export default class Map extends React.Component {
 	render() {
 		return (
 			<View style={{flex: 1}}>
-				<MapView style={styles.map} initialRegion={this.state.mapOptions}>
+				<MapView style={styles.map} 
+				initialRegion={this.state.mapOptions} 
+				ref={map => { this.map = map }}>
+
 					<MapView.Marker.Animated
 						ref={marker => { this.marker = marker }}
-						coordinate={{latitude: this.state.mapOptions.latitude, longitude: this.state.mapOptions.longitude}}
-					/>
+						coordinate={{
+							latitude: this.state.mapOptions.latitude, 
+							longitude: this.state.mapOptions.longitude
+						}} />
 				</MapView>
 			</View>			
 		);
