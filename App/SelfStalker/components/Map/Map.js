@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform, Text, View } from 'react-native';
-import { MapView, Constants, Location, Permissions } from 'expo';
+import { MapView, Constants, AnimatedRegion, Marker } from 'expo';
 
 // Custom component imports
 import styles from './Styles';
@@ -13,34 +13,28 @@ export default class Map extends React.Component {
 
         this.state = {
 			mapOptions: {
-				latitude: 37,
-				longitude: -122,
-				latitudeDelta: 0.09,
-				longitudeDelta: 0.04
+				latitude: 60.196875,
+				longitude: 24.944964,
+				latitudeDelta: 0.01,
+				longitudeDelta: 0.01
 			},
-			currentLocation: null,
 			errorMessage: null,
-			realTimeLocation: null,
 		};
 
 		this.getDeviceLocation = this.getDeviceLocation.bind(this);
-	}
-	
-	componentWillMount() {
-		if (Platform.OS === 'android' && !Constants.isDevice) {
-			this.setState({
-				errorMessage: 'Hey Maps dont work! Use an Android device!',
-			});
-		} else {
-			this._getLocationAsync();			
-		}
+		this.watchLocation = this.watchLocation.bind(this);
 	}
 
-	componentDidMount() {
-		this.getDeviceLocation();
+	static navigationOptions = {
+		headerTitle: <Header title='SelfStalker' />,
+	};
 
-		const watchId = navigator.geolocation.watchPosition(location => {
-			this.setState({ realTimeLocation: location.coords });
+	watchLocation = () => {
+		this.watchId = navigator.geolocation.watchPosition(position => {
+			const lat = position.coords.latitude;
+			const long = position.coords.longitude;
+
+			this.setMapCoords(lat, long);
 		}, error => console.log(error),
 		{
 			enableHighAccuracy: true,
@@ -49,48 +43,92 @@ export default class Map extends React.Component {
 		});
 	}
 
-	_getLocationAsync = async () => {
-		let { status } = await Permissions.askAsync(Permissions.LOCATION);
-		if (status !== 'granted') {
-			this.setState({
-				errorMessage: 'Permission to access location was denied',
-			});
-		}
+	getDeviceLocation = () => {
+		navigator.geolocation.getCurrentPosition(position => {
+			const lat = position.coords.latitude;
+			const long = position.coords.longitude;
 
-		let location = await Location.getCurrentPositionAsync({});
-		this.setState({ currentLocation: location });
-		console.log(this.state.currentLocation);
-	};
+			this.setMapCoords(lat, long);
+		}, error => console.log('Error in getting device location: ', error),
+		{ 
+			enableHighAccuracy: true, 
+			timeout: 200000, 
+			maximumAge: 1000 
+		});
+	}
 
-	static navigationOptions = {
-		headerTitle: <Header title='SelfStalker' />,
-    };
-    
+	setMapCoords = (lat, long) => {		
+		const options = {
+			latitude: lat,
+			longitude: long,
+			latitudeDelta: this.state.mapOptions.latitudeDelta,
+			longitudeDelta: this.state.mapOptions.longitudeDelta
+		};			
+		
+		this.setState({ mapOptions: options });
+	}
+	    
     handleButtonPress = () => {
 
 	}
-	
-	getDeviceLocation = () => {
-		
+
+	getInitialState = () => {
+		return {
+			coordinate: new AnimatedRegion({
+				latitude: this.state.mapOptions.latitude,
+				longitude: this.state.mapOptions.longitude
+			}),
+		};
+	}
+
+	componentWillReceiveProps(nextProps) {
+		const duration = 500
+
+		if (this.props.coordinate !== nextProps.coordinate) {
+			if (Platform.OS === 'android') {
+				if (this.marker) {
+					this.marker._component.animateMarkerToCoordinate(
+						nextProps.coordinate,
+						duration
+					);
+				}
+			} else {
+				this.state.coordinate.timing({
+					...nextProps.coordinate,
+					duration
+				}).start();
+			}
+		}
+	}
+
+	componentWillMount() {
+		if (Platform.OS === 'android' && !Constants.isDevice) {
+			this.setState({
+				errorMessage: 'Hey Maps dont work! Use an Android device!',
+			});
+		} else {
+					
+		}
+	}
+
+	componentDidMount() {
+		this.getDeviceLocation();
+		this.watchLocation();
+	}
+
+	componentWillUnmount() {
+		navigator.geolocation.clearWatch(this.watchID);
 	}
 
 	render() {
-		const location = this.state.realTimeLocation ? {
-			lat: this.state.realTimeLocation.latitude,
-			long: this.state.realTimeLocation.longitude
-		} : null;
-
 		return (
 			<View style={{flex: 1}}>
-				<MapView style={styles.map} initialRegion={this.state.mapOptions} />
-				{ location ? (
-				<View style={{position: 'absolute', bottom: 0, height: 200, width: 400, backgroundColor: '#fff'}}>
-					
-						<Text>{location.lat}</Text> 
-						<Text>{location.long}</Text> 
-					
-				</View>
-				) : (<View></View>)}					
+				<MapView style={styles.map} initialRegion={this.state.mapOptions}>
+					<MapView.Marker.Animated
+						ref={marker => { this.marker = marker }}
+						coordinate={{latitude: this.state.mapOptions.latitude, longitude: this.state.mapOptions.longitude}}
+					/>
+				</MapView>
 			</View>			
 		);
 	}
