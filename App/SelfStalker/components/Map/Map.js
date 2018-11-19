@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform, Text, View } from 'react-native';
-import { MapView, Constants, AnimatedRegion, Marker } from 'expo';
+import { MapView, Constants, AnimatedRegion } from 'expo';
 
 // Custom component imports
 import styles from './Styles';
@@ -18,95 +18,120 @@ export default class Map extends React.Component {
 				latitudeDelta: 0.01,
 				longitudeDelta: 0.01
 			},
+			region: {},
+			strokeCoordinates: [],
 			errorMessage: null,
+			isWatching: false,
+			watchButtonText: 'Start Stalking',
+			watchInterval: null,
 		};
-
-		this.getDeviceLocation = this.getDeviceLocation.bind(this);
-		this.watchLocation = this.watchLocation.bind(this);
 	}
 
 	static navigationOptions = {
 		headerTitle: <Header title='SelfStalker' />,
 	};
 
-	focusToLocation = () => {
-		this.mapRef.fitToSuppliedMarkers(
-			this.marker,
-			true,
-		);
+	updateStroke = async () => {
+		await this.setDeviceLocation();
+		await this.setStrokeCoordinates(this.state.mapOptions.latitude, this.state.mapOptions.longitude);
 	}
 
 	watchLocation = () => {
-		this.watchId = navigator.geolocation.watchPosition(position => {
-			const lat = position.coords.latitude;
-			const long = position.coords.longitude;
+		const watch = setInterval(this.updateStroke, 5000);
 
-			this.setMapCoords(lat, long);
-			this.focusToLocation();
-		}, error => console.log(error),
-		{
-			enableHighAccuracy: true,
-			timeout: 1000,
-			maximumAge: 1000,
-		});
+		this.setState({ watchInterval: watch });
+
+		// this.watchId = navigator.geolocation.watchPosition(position => {
+		// 	this.setMapCoords(position.coords);
+		// 	this.updateRegion();
+		// 	this.focusToRegion();
+		// }, error => console.log(error),
+		// {
+		// 	enableHighAccuracy: true,
+		// 	timeout: 500,
+		// 	maximumAge: 0,
+		// });
 	}
 
-	getDeviceLocation = () => {
-		navigator.geolocation.getCurrentPosition(position => {
-			const lat = position.coords.latitude;
-			const long = position.coords.longitude;
-
-			this.setMapCoords(lat, long);
+	setDeviceLocation = async () => {
+		await navigator.geolocation.getCurrentPosition(position => {
+			this.setMapCoords(position.coords);
+			this.updateRegion();
+			this.focusToRegion();
+			this.setStrokeCoordinates(this.state.mapOptions.latitude, this.state.mapOptions.longitude);
 		}, error => console.log('Error in getting device location: ', error),
 		{ 
-			enableHighAccuracy: true, 
+			enableHighAccuracy: true,
 			timeout: 200000, 
 			maximumAge: 1000 
 		});
 	}
 
-	setMapCoords = (lat, long) => {		
-		const options = {
-			latitude: lat,
-			longitude: long,
-			latitudeDelta: this.state.mapOptions.latitudeDelta,
-			longitudeDelta: this.state.mapOptions.longitudeDelta
-		};			
+	setMapCoords = (coords) => {		
+		this.setState({ 
+			mapOptions: {
+				latitude: coords.latitude,
+				longitude: coords.longitude,
+				latitudeDelta: this.state.region.latitudeDelta 
+					? this.state.region.latitudeDelta 
+					: this.state.mapOptions.latitudeDelta,
+				longitudeDelta: this.state.region.longitudeDelta 
+					? this.state.region.longitudeDelta 
+					: this.state.mapOptions.longitudeDelta
+			} 
+		});
+	}
+
+	setStrokeCoordinates = (lat, lng) => {
+		let strokeCoordinates = JSON.parse(JSON.stringify(this.state.strokeCoordinates));
+		console.log('old coords: ', strokeCoordinates);
+		const newLatLng = { latitude: lat, longitude: lng };
 		
-		this.setState({ mapOptions: options });
+		if (!strokeCoordinates.includes(newLatLng)) {
+			strokeCoordinates.push(newLatLng);
+			console.log('new coords: ', strokeCoordinates);
+			this.setState({ strokeCoordinates: strokeCoordinates });
+		}
+	}
+
+	stopWatchLocation = () => {
+		// navigator.geolocation.clearWatch(this.watchID);
+		clearInterval(this.state.watchInterval);
 	}
 	    
-    handleButtonPress = () => {
+    onWatchButtonPress = async () => {
+		if (!this.state.isWatching) {
+			this.watchLocation();
 
-	}
+			await this.setState({
+				isWatching: true,
+			});
+		} else {
+			this.stopWatchLocation();
 
-	getInitialState = () => {
-		return {
-			coordinate: new AnimatedRegion({
-				latitude: this.state.mapOptions.latitude,
-				longitude: this.state.mapOptions.longitude
-			}),
-		};
-	}
-
-	componentWillReceiveProps(nextProps) {
-		const duration = 500
-
-		if (this.props.coordinate !== nextProps.coordinate) {
-			if (Platform.OS === 'android') {
-				if (this.marker) {
-					this.marker._component.animateMarkerToCoordinate(
-						nextProps.coordinate,
-						duration
-					);
-				}
-			} else {
-				this.state.coordinate.timing({
-					...nextProps.coordinate,
-					duration
-				}).start();
-			}
+			await this.setState({
+				isWatching: false,
+			});
 		}
+	}
+
+	updateRegion = () => {
+		const newRegion = {
+			latitude: this.state.mapOptions.latitude,
+			longitude: this.state.mapOptions.longitude,
+			latitudeDelta: this.state.mapOptions.latitudeDelta,
+			longitudeDelta: this.state.mapOptions.longitudeDelta
+		}
+
+		this.setState({ region: newRegion });		
+	}
+
+	focusToRegion = () => {
+		setTimeout(() => this.map.animateToRegion(this.state.region, 500), 1000);
+	}
+
+	onRegionChange = (region) => {
+		this.updateRegion(region);
 	}
 
 	componentWillMount() {
@@ -115,33 +140,38 @@ export default class Map extends React.Component {
 				errorMessage: 'Hey Maps dont work! Use an Android device!',
 			});
 		} else {
-					
+			this.setDeviceLocation();			
 		}
 	}
 
-	componentDidMount() {
-		this.getDeviceLocation();
-		this.watchLocation();
-	}
-
-	componentWillUnmount() {
-		navigator.geolocation.clearWatch(this.watchID);
-	}
-
 	render() {
+		const watchBtnText = this.state.isWatching ? 'Stop' : 'Start Stalking';
+		const markerCoords = {
+			latitude: this.state.strokeCoordinates[this.state.strokeCoordinates.length - 1].latitude,
+			longitude: this.state.strokeCoordinates[this.state.strokeCoordinates.length - 1].longitude 
+		};
+
 		return (
 			<View style={{flex: 1}}>
 				<MapView style={styles.map} 
-				initialRegion={this.state.mapOptions} 
+				initialRegion={this.state.mapOptions}
+				onRegionChange={this.onRegionChange} 
 				ref={map => { this.map = map }}>
-
-					<MapView.Marker.Animated
-						ref={marker => { this.marker = marker }}
-						coordinate={{
-							latitude: this.state.mapOptions.latitude, 
-							longitude: this.state.mapOptions.longitude
-						}} />
+					<MapView.Marker coordinate={markerCoords} />
+					<MapView.Polyline 
+						coordinates={this.state.strokeCoordinates} 
+						strokeColor={'#CC0099'}
+						strokeOpacity={1.0}
+						strokeWidth={5}
+						geodesic={true}
+					/>
 				</MapView>
+				<View style={styles.buttonWrapper}>
+					<ButtonLarge 
+						buttonTitle={watchBtnText} 
+						pressMethod={this.onWatchButtonPress} 
+					/>
+				</View>
 			</View>			
 		);
 	}
